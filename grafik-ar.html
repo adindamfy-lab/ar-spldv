@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>AR Detektif Titik Potong SPLDV</title>
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+  <style>
+    body { margin: 0; overflow: hidden; font-family: sans-serif; }
+    .ar-controls {
+      position: fixed;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.9);
+      padding: 14px 18px;
+      border-radius: 16px;
+      color: white;
+      z-index: 1000;
+      width: 90%;
+      max-width: 440px;
+      text-align: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+      border: 1px solid #38bdf8;
+    }
+    .ar-controls h3 { margin: 0 0 6px 0; font-size: 1rem; color: #38bdf8; }
+    .eq-label { font-size: 0.8rem; margin-bottom: 8px; }
+    .eq-label span.red { color: #f87171; font-weight: bold; }
+    .eq-label span.blue { color: #60a5fa; font-weight: bold; }
+    .btn-fire {
+      background: #0284c7;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="ar-controls">
+    <h3>📐 Detektif Garis SPLDV</h3>
+    <div class="eq-label">
+      Garis 1: <span class="red">x + y = 6</span> | Garis 2: <span class="blue">2x - y = 0</span>
+    </div>
+    <button class="btn-fire" onclick="tembakLaser()">Tembak Laser & Cari Titik Potong ⚡</button>
+  </div>
+
+  <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+    <a-marker preset="hiro">
+      <!-- Grid Bidang Kartesius Datar di Meja -->
+      <a-plane position="0 0 0" rotation="-90 0 0" width="3" height="3" color="#1e293b" opacity="0.8"></a-plane>
+      <!-- Garis Grid Kartesius Sumbu X & Y -->
+      <a-box position="0 0.01 0" rotation="-90 0 0" width="2.8" height="0.02" depth="0.02" color="#94a3b8"></a-box>
+      <a-box position="0 0.01 0" rotation="-90 90 0" width="2.8" height="0.02" depth="0.02" color="#94a3b8"></a-box>
+
+      <!-- Jalur Laser Merah: x + y = 6 (Dimodelkan bergradien -1) -->
+      <a-box id="laser-red" position="0 0.05 0" rotation="-90 45 0" width="2.4" height="0.04" depth="0.04" color="#ef4444" visible="false">
+        <a-text value="Garis: x + y = 6" align="center" position="0 0.1 0" rotation="-90 0 0" scale="0.25 0.25 0.25" color="#fca5a5"></a-text>
+      </a-box>
+
+      <!-- Jalur Laser Biru: 2x - y = 0 (Dimodelkan bergradien 2) -->
+      <a-box id="laser-blue" position="0 0.05 0" rotation="-90 -30 0" width="2.4" height="0.04" depth="0.04" color="#3b82f6" visible="false">
+        <a-text value="Garis: 2x - y = 0" align="center" position="0 0.1 0" rotation="-90 0 0" scale="0.25 0.25 0.25" color="#93c5fd"></a-text>
+      </a-box>
+
+      <!-- Portal / Bintang Animasi Menyala di Titik Potong (x=2, y=4) -->
+      <a-entity id="portal-solusi" position="0.25 0.15 0.15" visible="false">
+        <a-sphere radius="0.12" color="#fbbf24" material="emissive: #f59e0b; emissiveIntensity: 1"
+          animation="property: scale; to: 1.3 1.3 1.3; dir: alternate; loop: true; dur: 500">
+        </a-sphere>
+        <a-ring color="#fde047" radius-inner="0.18" radius-outer="0.22" rotation="-90 0 0"
+          animation="property: rotation; to: -90 360 0; loop: true; dur: 2000; easing: linear">
+        </a-ring>
+        <a-text value="Solusi: (2, 4)" align="center" position="0 0.35 0" rotation="-45 0 0" scale="0.4 0.4 0.4" color="#ffffff" font="roboto"></a-text>
+      </a-entity>
+    </a-marker>
+
+    <a-entity camera></a-entity>
+  </a-scene>
+
+  <script>
+    function tembakLaser() {
+      document.getElementById('laser-red').setAttribute('visible', 'true');
+      document.getElementById('laser-blue').setAttribute('visible', 'true');
+      setTimeout(() => {
+        document.getElementById('portal-solusi').setAttribute('visible', 'true');
+      }, 600);
+    }
+  </script>
+</body>
+</html>
